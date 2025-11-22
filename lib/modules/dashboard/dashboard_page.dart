@@ -3,6 +3,7 @@ import 'package:airnav_helpdesk/modules/dashboard/widgets/request_card.dart';
 import 'package:airnav_helpdesk/modules/dashboard/widgets/stat_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'dashboard_controller.dart';
 
 class DashboardPage extends GetView<DashboardController> {
@@ -40,7 +41,8 @@ class DashboardPage extends GetView<DashboardController> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0),
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 8),
             Container(height: 4, color: Colors.black, width: double.infinity),
@@ -54,7 +56,9 @@ class DashboardPage extends GetView<DashboardController> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.teal),
                         borderRadius: BorderRadius.circular(6),
@@ -65,31 +69,31 @@ class DashboardPage extends GetView<DashboardController> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Obx(() => Switch(
-                      value: controller.availability.value,
-                      onChanged: controller.setAvailability,
-                    )),
+                    Obx(
+                      () => ShadSwitch(
+                        value: controller.availability.value,
+                        onChanged: controller.setAvailability,
+                      ),
+                    ),
                   ],
                 ),
                 // period dropdown
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
+                Obx(
+                  () => ShadSelect<String>(
+                    placeholder: const Text('Select Period'),
+                    initialValue: controller.period.value,
+                    options: const [
+                      ShadOption(value: 'Monthly', child: Text('Monthly')),
+                      ShadOption(value: 'Weekly', child: Text('Weekly')),
+                      ShadOption(value: 'Daily', child: Text('Daily')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) controller.setPeriod(value);
+                    },
+                    selectedOptionBuilder: (context, value) {
+                      return Text(value);
+                    },
                   ),
-                  child: Obx(() => DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: controller.period.value,
-                      items: const [
-                        DropdownMenuItem(value: 'Monthly', child: Text('Monthly')),
-                        DropdownMenuItem(value: 'Weekly', child: Text('Weekly')),
-                        DropdownMenuItem(value: 'Daily', child: Text('Daily')),
-                      ],
-                      onChanged: controller.setPeriod,
-                    ),
-                  )),
                 ),
               ],
             ),
@@ -103,10 +107,26 @@ class DashboardPage extends GetView<DashboardController> {
               physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: 1.4,
               children: const [
-                StatCard(icon: Icons.phone_in_talk, label: 'Completed Requests', value: '0'),
-                StatCard(icon: Icons.star_border, label: 'Average Rating', value: '0'),
-                StatCard(icon: Icons.check_circle_outline, label: 'Completed Requests', value: '0'),
-                StatCard(icon: Icons.star_border, label: 'Average Rating', value: '0'),
+                StatCard(
+                  icon: Icons.phone_in_talk,
+                  label: 'Completed Requests',
+                  value: '0',
+                ),
+                StatCard(
+                  icon: Icons.star_border,
+                  label: 'Average Rating',
+                  value: '0',
+                ),
+                StatCard(
+                  icon: Icons.check_circle_outline,
+                  label: 'Completed Requests',
+                  value: '0',
+                ),
+                StatCard(
+                  icon: Icons.star_border,
+                  label: 'Average Rating',
+                  value: '0',
+                ),
               ],
             ),
 
@@ -117,18 +137,19 @@ class DashboardPage extends GetView<DashboardController> {
             ),
             const SizedBox(height: 12),
 
-            Obx(() => ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+            Expanded(
+              child: Obx(
+                () => ListView.separated(
+                  padding: const EdgeInsets.only(bottom: 18),
                   itemCount: controller.requests.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final r = controller.requests[index];
                     return RequestCard(request: r);
                   },
-                )),
-
-            const SizedBox(height: 18),
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class StatCard extends StatelessWidget {
   final IconData icon;
@@ -13,12 +14,8 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ShadCard(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black54),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -26,10 +23,7 @@ class StatCard extends StatelessWidget {
           const Spacer(),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.w800,
-            ),
+            style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 6),
           Text(
