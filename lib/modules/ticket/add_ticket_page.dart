@@ -48,6 +48,7 @@ class AddTicketPage extends GetView<AddTicketController> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: controller.subjectController,
                 decoration: const InputDecoration(
                   labelText: 'Subject',
                   border: OutlineInputBorder(),
@@ -62,6 +63,7 @@ class AddTicketPage extends GetView<AddTicketController> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: controller.descriptionController,
                 decoration: const InputDecoration(
                   labelText: 'Describe Your Issue',
                   border: OutlineInputBorder(),

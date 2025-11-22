@@ -8,27 +8,12 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'main_controller.dart';
 import 'modules/dashboard/dashboard_page.dart';
 
-
 class MainPage extends GetView<MainController> {
   const MainPage({super.key});
 
-  List<Widget> _screens() => [
-    const APage(),
-    const BPage(),
-    DashboardPage(),
-    AddTicketPage(),
-    FaqPage()
-  ];
+  List<Widget> _screens() => [DashboardPage(), AddTicketPage(), FaqPage()];
 
   List<PersistentBottomNavBarItem> _items() => [
-    PersistentBottomNavBarItem(
-      icon: const Icon(Icons.abc),
-      title: 'A',
-    ),
-    PersistentBottomNavBarItem(
-      icon: const Icon(Icons.abc_rounded),
-      title: 'B',
-    ),
     PersistentBottomNavBarItem(
       icon: const Icon(Icons.dashboard),
       title: 'Dashboard',
