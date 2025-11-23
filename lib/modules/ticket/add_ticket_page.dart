@@ -15,7 +15,6 @@ class AddTicketPage extends GetView<AddTicketController> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildSelect(
                 label: 'Department',
@@ -105,6 +104,19 @@ class AddTicketPage extends GetView<AddTicketController> {
             ],
           ),
         ),
+      ],
+    ));
+  }
+
+   Widget _buildLabel(String label, {bool isRequired = true}) {
+    return RichText(
+      text: TextSpan(
+        text: label,
+        style: const TextStyle(fontSize: 13, color: Colors.black54),
+        children: <TextSpan>[
+          if (isRequired)
+            const TextSpan(text: ' *', style: TextStyle(color: Colors.red, fontSize: 13)),
+        ],
       ),
     );
   }
