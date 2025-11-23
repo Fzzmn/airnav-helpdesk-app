@@ -6,7 +6,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'main_controller.dart';
 import 'modules/dashboard/dashboard_page.dart';
 import 'modules/menu/menu_page.dart';
-import 'modules/ticket/ticket_list_page.dart';
+import 'modules/ticket/list/ticket_list_page.dart';
 
 class MainPage extends GetView<MainController> {
   const MainPage({super.key});

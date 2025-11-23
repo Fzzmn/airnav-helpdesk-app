@@ -1,4 +1,4 @@
-import 'package:airnav_helpdesk/modules/ticket/ticket_list_page.dart';
+import 'package:airnav_helpdesk/modules/ticket/list/ticket_list_page.dart';
 import 'package:get/get.dart';
 
 import '../../main_binding.dart';
@@ -15,7 +15,7 @@ import '../../modules/ticket/add_ticket_binding.dart';
 import '../../modules/ticket/add_ticket_page.dart';
 import '../../modules/ticket/detail/detail_ticket_binding.dart';
 import '../../modules/ticket/detail/detail_ticket_page.dart';
-import '../../modules/ticket/ticket_list_binding.dart';
+import '../../modules/ticket/list/ticket_list_binding.dart';
 
 part 'app_routes.dart';
 

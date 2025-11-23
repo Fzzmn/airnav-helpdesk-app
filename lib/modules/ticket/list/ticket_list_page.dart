@@ -3,7 +3,7 @@ import 'package:airnav_helpdesk/core/widgets/app_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'ticket_list_controller.dart';
-import 'widget/ticket_card.dart';
+import '../widget/ticket_card.dart';
 
 class TicketListPage extends GetView<TicketListController> {
   const TicketListPage({super.key});
