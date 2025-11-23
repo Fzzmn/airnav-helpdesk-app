@@ -328,7 +328,7 @@ class _TicketCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 ),
-                child: const Text('View Details', style: TextStyle(fontSize: 14)),
+                child: const Text('View Details', style: TextStyle(fontSize: 14, color: Colors.white)),
               ),
             ),
           ],
