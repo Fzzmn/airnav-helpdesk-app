@@ -52,7 +52,7 @@ class _TicketListPageState extends State<TicketListPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Get.theme.scaffoldBackgroundColor,
-      appBar: AppBarWidget(titleText: 'Tiket Saya'),
+      appBar: AppBarWidget(titleText: 'my_tickets'.tr),
       body: Column(
         children: [
           const SizedBox(height: 8),
@@ -60,7 +60,7 @@ class _TicketListPageState extends State<TicketListPage>
           const SizedBox(height: 8),
           SearchField(
             onChanged: controller.onSearch,
-            hintText: 'Cari tiket...',
+            hintText: 'search_ticket_hint'.tr,
           ),
           _buildFilterBar(),
           const SizedBox(height: 8),
@@ -99,21 +99,21 @@ class _TicketListPageState extends State<TicketListPage>
       child: Row(
         children: [
           _filterDropdown(
-            label: "Status",
+            label: "filter_status".tr,
             value: controller.statusFilter.value,
             items: const ['', 'Done', 'In Progress', 'Assigned', 'New'],
             onChanged: controller.setStatusFilter,
           ),
           const SizedBox(width: 10),
           _filterDropdown(
-            label: "Priority",
+            label: "filter_priority".tr,
             value: controller.priorityFilter.value,
             items: const ['', 'Critical', 'High', 'Medium', 'Low'],
             onChanged: controller.setPriorityFilter,
           ),
           const SizedBox(width: 10),
           _filterDropdown(
-            label: "Sort",
+            label: "filter_sort".tr,
             value: controller.sortOption.value,
             items: const ['date_desc', 'date_asc', 'priority', 'progress'],
             onChanged: controller.setSortOption,
@@ -131,9 +131,9 @@ class _TicketListPageState extends State<TicketListPage>
   }) {
     return Expanded(
       child: Obx(() {
-        final reactiveValue = (label == "Status")
+        final reactiveValue = (label == "filter_status".tr)
             ? controller.statusFilter.value
-            : (label == "Priority")
+            : (label == "filter_priority".tr)
             ? controller.priorityFilter.value
             : controller.sortOption.value;
 
@@ -170,7 +170,7 @@ class _TicketListPageState extends State<TicketListPage>
               .map(
                 (e) => DropdownMenuItem(
                   value: e,
-                  child: Text(e.isEmpty ? 'All' : e),
+                  child: Text(_getLocalizedValue(e, label)),
                 ),
               )
               .toList(),
@@ -180,20 +180,69 @@ class _TicketListPageState extends State<TicketListPage>
     );
   }
 
-  // Switched to TabBar for seamless sliding animation like in notification_page
+  String _getLocalizedValue(String value, String label) {
+    if (value.isEmpty) return 'status_all'.tr;
+
+    if (label == 'filter_status'.tr) {
+      switch (value) {
+        case 'Done':
+          return 'status_done'.tr;
+        case 'In Progress':
+          return 'status_in_progress'.tr;
+        case 'Assigned':
+          return 'status_assigned'.tr;
+        case 'New':
+          return 'status_new'.tr;
+        default:
+          return value;
+      }
+    } else if (label == 'filter_priority'.tr) {
+      switch (value) {
+        case 'Critical':
+          return 'priority_critical'.tr;
+        case 'High':
+          return 'priority_high'.tr;
+        case 'Medium':
+          return 'priority_medium'.tr;
+        case 'Low':
+          return 'priority_low'.tr;
+        default:
+          return value;
+      }
+    } else if (label == 'filter_sort'.tr) {
+      switch (value) {
+        case 'date_desc':
+          return 'sort_date_desc'.tr;
+        case 'date_asc':
+          return 'sort_date_asc'.tr;
+        case 'priority':
+          return 'sort_priority'.tr;
+        case 'progress':
+          return 'sort_progress'.tr;
+        default:
+          return value;
+      }
+    }
+    return value;
+  }
+
   Widget _buildTabs() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: TabBar(
-        controller: _tabController,
-        isScrollable: true,
-        tabAlignment: TabAlignment.start,
-        // Style replication from original design
-        labelColor: const Color(0xFF135CA1),
-        unselectedLabelColor: const Color(0xFF475569),
-        labelStyle: GoogleFonts.poppins(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
+    return Obx(
+      () => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: controller.tabs
+                .map(
+                  (tab) => _tabItem(
+                    tab.tr,
+                    controller.activeTab.value == tab,
+                    () => controller.changeTab(tab),
+                  ),
+                )
+                .toList(),
+          ),
         ),
         unselectedLabelStyle: GoogleFonts.poppins(
           fontSize: 14,
