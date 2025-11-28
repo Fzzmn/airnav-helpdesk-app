@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'login_controller.dart';
@@ -32,10 +33,14 @@ class LoginPage extends GetView<LoginController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Icon(
-                        Icons.airplanemode_active_rounded,
-                        size: 64,
-                        color: Get.theme.colorScheme.primary,
+                      SvgPicture.asset(
+                        'assets/images/aircraft.svg',
+                        width: 64,
+                        height: 64,
+                        colorFilter: ColorFilter.mode(
+                          Get.theme.colorScheme.primary,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       const SizedBox(height: 32),
                       Text(
