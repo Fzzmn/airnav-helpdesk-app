@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:airnav_helpdesk/widgets/lottie_loading_widget.dart';
+import '../../widgets/lottie_loading_widget.dart';
 import 'login_controller.dart';
 
 class LoginPage extends GetView<LoginController> {

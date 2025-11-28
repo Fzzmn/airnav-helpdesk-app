@@ -1,4 +1,3 @@
-import 'package:airnav_helpdesk/core/config/app_pages.dart';
 import 'package:airnav_helpdesk/core/widgets/app_bar_widget.dart';
 import 'package:airnav_helpdesk/core/widgets/search_field.dart';
 import 'package:flutter/material.dart';
@@ -55,37 +54,84 @@ class _TicketListPageState extends State<TicketListPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Get.theme.scaffoldBackgroundColor,
-      appBar: AppBarWidget(titleText: 'my_tickets'.tr),
-      body: Column(
-        children: [
-          const SizedBox(height: 1),
-          _buildTabs(),
-          const SizedBox(height: 1),
-          SearchField(
-            onChanged: controller.onSearch,
-            hintText: 'search_ticket_hint'.tr,
+      appBar: AppBarWidget(
+        titleText: 'my_tickets'.tr,
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
+
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withOpacity(0.7),
+          labelStyle: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
           ),
-          _buildFilterBar(),
-          const SizedBox(height: 1),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: controller.tabs.map((tabName) {
-                return Obx(() {
-                  final list = controller.getTicketsForTab(tabName);
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(12),
-                    itemCount: list.length,
-                    itemBuilder: (_, i) => TicketCard(
-                      ticket: list[i],
-                      activeTab: tabName,
+          unselectedLabelStyle: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+          ),
+
+          labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+
+          indicatorColor: Colors.white,
+          indicatorWeight: 2,
+          indicatorSize: TabBarIndicatorSize.label,
+
+          splashFactory: NoSplash.splashFactory,
+          overlayColor: MaterialStateProperty.all(Colors.transparent),
+
+          tabs: controller.tabs.map((tab) => Tab(text: tab.tr)).toList(),
+        ),
+      ),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: Get.theme.scaffoldBackgroundColor,
+              automaticallyImplyLeading: false,
+              pinned: false,
+              floating: true,
+              toolbarHeight: 140,
+              flexibleSpace: SafeArea(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 8),
+                    SearchField(
+                      onChanged: controller.onSearch,
+                      hintText: 'search_ticket_hint'.tr,
                     ),
-                  );
-                });
-              }).toList(),
+                    _buildFilterBar(),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: controller.tabs.map((tabName) {
+            return Obx(() {
+              final list = controller.getTicketsForTab(tabName);
+              // Using ListView.builder with physics that works with NestedScrollView
+              return ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: list.length,
+                itemBuilder: (_, index) => Padding(
+                  padding: EdgeInsets.only(
+                    left: 12,
+                    right: 12,
+                    top: 0,
+                    bottom: index == list.length - 1 ? 12 : 0,
+                  ),
+                  child: TicketCard(ticket: list[index], activeTab: tabName),
+                ),
+              );
+            });
+          }).toList(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: controller.goToNewTicket,
@@ -137,64 +183,95 @@ class _TicketListPageState extends State<TicketListPage>
         final reactiveValue = (label == "filter_status".tr)
             ? controller.statusFilter.value
             : (label == "filter_priority".tr)
-                ? controller.priorityFilter.value
-                : controller.sortOption.value;
+            ? controller.priorityFilter.value
+            : controller.sortOption.value;
 
-        return PopupMenuButton<String>(
-          offset: const Offset(0, 50),
-          color: Get.theme.cardColor, // Use theme card color
-          onSelected: onChanged,
-          itemBuilder: (context) {
-            return items.map((itemValue) {
-              return PopupMenuItem<String>(
-                value: itemValue,
-                child: Text(_getLocalizedValue(itemValue, label),
-                    style: GoogleFonts.montserrat()),
-              );
-            }).toList();
-          },
-          child: InputDecorator(
-            decoration: InputDecoration(
-              labelText: label,
-              labelStyle: GoogleFonts.montserrat(fontSize: 14),
-              floatingLabelStyle: GoogleFonts.montserrat(fontSize: 16),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Get.theme.dividerColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Get.theme.dividerColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Get.theme.primaryColor,
-                  width: 1.5,
+        return Container(
+          decoration: BoxDecoration(
+            color: Get.theme.cardColor,
+            borderRadius: BorderRadius.circular(30.0),
+            boxShadow: [
+              BoxShadow(
+                color: Get.theme.shadowColor.withOpacity(
+                  Get.isDarkMode ? 0.15 : 0.04,
                 ),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
-              filled: true,
-              fillColor: Get.theme.cardColor, // Use theme card color
-            ),
-            isEmpty: reactiveValue.isEmpty,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
+            ],
+          ),
+          child: PopupMenuButton<String>(
+            offset: const Offset(0, 50),
+            color: Get.theme.cardColor,
+            onSelected: onChanged,
+            itemBuilder: (context) {
+              return items.map((itemValue) {
+                return PopupMenuItem<String>(
+                  value: itemValue,
                   child: Text(
-                    reactiveValue.isEmpty
-                        ? ''
-                        : _getLocalizedValue(reactiveValue, label),
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                        color: Get.theme.textTheme.bodyLarge?.color),
+                    _getLocalizedValue(itemValue, label),
+                    style: GoogleFonts.montserrat(),
+                  ),
+                );
+              }).toList();
+            },
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: label,
+                labelStyle: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  color: Get.theme.hintColor,
+                ),
+                floatingLabelStyle: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: Get.theme.hintColor,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: Get.theme.primaryColor,
+                    width: 1.5,
                   ),
                 ),
-                Icon(Icons.arrow_drop_down,
-                    size: 20, color: Get.theme.hintColor),
-              ],
+                filled: true,
+                fillColor: Colors.transparent,
+              ),
+              isEmpty: reactiveValue.isEmpty,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      reactiveValue.isEmpty
+                          ? ''
+                          : _getLocalizedValue(reactiveValue, label),
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        color: Get.theme.textTheme.bodyLarge?.color,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    size: 20,
+                    color: Get.theme.hintColor,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -243,45 +320,5 @@ class _TicketListPageState extends State<TicketListPage>
     }
     // Fallback if no match is found
     return value;
-  }
-
-  Widget _buildTabs() {
-    return Container(
-      // To make the TabBar background adapt, we color the container
-      color: Get.theme.scaffoldBackgroundColor,
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: TabBar(
-        controller: _tabController,
-        isScrollable: true,
-        tabAlignment: TabAlignment.start,
-
-        // TEXT STYLE
-        labelColor: Get.theme.primaryColor,
-        unselectedLabelColor: Get.theme.unselectedWidgetColor,
-        labelStyle: GoogleFonts.montserrat(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: GoogleFonts.montserrat(
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-        ),
-
-        // PADDING agar tab tidak tinggi
-        labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 1),
-
-        // INDICATOR
-        indicatorColor: Get.theme.primaryColor,
-        indicatorWeight: 2,
-        indicatorSize: TabBarIndicatorSize.label,
-
-        // Remove ripple/splash biar smooth
-        splashFactory: NoSplash.splashFactory,
-        overlayColor: MaterialStateProperty.all(Colors.transparent),
-
-        // MENAMPILKAN TAB SESUAI NAMA
-        tabs: controller.tabs.map((tab) => Tab(text: tab.tr)).toList(),
-      ),
-    );
   }
 }
