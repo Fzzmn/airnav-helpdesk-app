@@ -17,7 +17,7 @@ class TicketListController extends GetxController {
   RxString statusFilter = ''.obs; // Done, In Progress, Assigned, New
   RxString priorityFilter = ''.obs; // Critical, High, Medium, Low
   RxString sortOption =
-      ''.obs;
+      'date_desc'.obs;
 
   get tickets => null; // date_desc, date_asc, priority, progress
 
