@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/widgets/app_bar_widget.dart';
 import 'add_ticket_controller.dart';
@@ -87,13 +88,13 @@ class AddTicketPage extends GetView<AddTicketController> {
               children: [
                 _buildReadOnlyField('nik_label'.tr, '10014377'),
                 const SizedBox(height: 16),
-                _buildReadOnlyField('name_label'.tr, 'BUDI'),
+                _buildReadOnlyField('name_label'.tr, 'Budi'),
                 const SizedBox(height: 16),
                 _buildReadOnlyField('department_label'.tr, 'IT'),
                 const SizedBox(height: 16),
                 _buildReadOnlyField(
                   'sub_department_label'.tr,
-                  'IT DEVELOPMENT',
+                  'IT Develpoment',
                 ),
               ],
             ),
@@ -118,7 +119,6 @@ class AddTicketPage extends GetView<AddTicketController> {
                   controller.departments,
                   controller.onDepartmentChanged,
                 ),
-
                 const SizedBox(height: 16),
                 _buildDropdown(
                   'category_label'.tr,
@@ -169,7 +169,7 @@ class AddTicketPage extends GetView<AddTicketController> {
     return RichText(
       text: TextSpan(
         text: label,
-        style: const TextStyle(fontSize: 13, color: Colors.black54),
+        style: Get.theme.textTheme.labelLarge,
         children: <TextSpan>[
           if (isRequired)
             const TextSpan(
@@ -190,14 +190,22 @@ class AddTicketPage extends GetView<AddTicketController> {
         TextFormField(
           initialValue: value,
           readOnly: true,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: const TextStyle(), // Removed font weight to match other fields
           decoration: InputDecoration(
             filled: true,
             fillColor:
                 Get.theme.inputDecorationTheme.fillColor ?? Get.theme.cardColor,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
@@ -215,55 +223,63 @@ class AddTicketPage extends GetView<AddTicketController> {
     List<String> items,
     ValueChanged<String?> onChanged,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildLabel(label),
-        const SizedBox(height: 8),
-        Obx(
-          () => DropdownButtonFormField<String>(
-            value: value.value,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor:
-                  Get.theme.inputDecorationTheme.fillColor ??
-                  Get.theme.cardColor,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+    return Obx(() {
+      return PopupMenuButton<String>(
+        offset: const Offset(0, 50),
+        color: Get.theme.cardColor,
+        onSelected: onChanged,
+        itemBuilder: (context) {
+          return items.map((itemValue) {
+            return PopupMenuItem<String>(
+              value: itemValue,
+              child: Text(itemValue, style: GoogleFonts.montserrat()),
+            );
+          }).toList();
+        },
+        child: InputDecorator(
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: GoogleFonts.montserrat(fontSize: 14),
+            floatingLabelStyle: GoogleFonts.montserrat(fontSize: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Get.theme.dividerColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Get.theme.dividerColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: Get.theme.primaryColor,
+                width: 1.5,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: Get.theme.colorScheme.primary,
-                  width: 1.5,
+            ),
+            filled: true,
+            fillColor: Get.theme.cardColor,
+          ),
+          isEmpty: value.value == null || value.value!.isEmpty,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  value.value ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.montserrat(
+                      color: Get.theme.textTheme.bodyLarge?.color),
                 ),
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 12,
-              ),
-            ),
-            hint: Text(
-              'choose_option'.tr,
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-            items: items.map((String item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item, style: const TextStyle(fontSize: 14)),
-              );
-            }).toList(),
-            onChanged: onChanged,
-            isExpanded: true,
+              Icon(Icons.arrow_drop_down,
+                  size: 20, color: Get.theme.hintColor),
+            ],
           ),
         ),
-      ],
-    );
+      );
+    });
   }
 
   Widget _buildTextField({
@@ -354,49 +370,51 @@ class AddTicketPage extends GetView<AddTicketController> {
           ),
         ),
         Obx(
-          () =>
-              controller.selectedFiles.isNotEmpty
-                  ? Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.selectedFiles.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 8),
-                        itemBuilder: (context, index) {
-                          final file = controller.selectedFiles[index];
-                          return Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.grey.shade300),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.attach_file, size: 20, color: Colors.grey.shade700),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    file.path.split('/').last,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 13),
-                                  ),
+          () => controller.selectedFiles.isNotEmpty
+              ? Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.selectedFiles.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final file = controller.selectedFiles[index];
+                        return Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.attach_file,
+                                  size: 20, color: Colors.grey.shade700),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  file.path.split('/').last,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 13),
                                 ),
-                                InkWell(
-                                  onTap: () => controller.removeFile(index),
-                                  child: const Icon(Icons.close, size: 18, color: Colors.red),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  )
-                  : const SizedBox.shrink(),
+                              ),
+                              InkWell(
+                                onTap: () => controller.removeFile(index),
+                                child: const Icon(Icons.close,
+                                    size: 18, color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );
@@ -417,7 +435,7 @@ class AddTicketPage extends GetView<AddTicketController> {
             ),
             child: Text(
               'submit_ticket'.tr,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -441,7 +459,7 @@ class AddTicketPage extends GetView<AddTicketController> {
             ),
             child: Text(
               'reset_form'.tr,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
         ),
